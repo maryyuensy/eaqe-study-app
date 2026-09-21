@@ -1,0 +1,1 @@
+{"name":"propexam-hk","version":"2.0.0","private":true,"type":"module","scripts":{"dev":"node server.mjs","test":"node qa.mjs"}}
