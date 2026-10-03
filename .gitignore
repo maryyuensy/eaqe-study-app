@@ -2,5 +2,10 @@
 .vercel/
 qa/
 node_modules/
+docs/question-drafts/
+.env
+.env.*
+!.env.example
+coverage/
 
 .vercel
