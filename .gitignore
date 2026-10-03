@@ -2,5 +2,6 @@
 .vercel/
 qa/
 node_modules/
+docs/question-drafts/
 
 .vercel

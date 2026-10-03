@@ -2,11 +2,12 @@ export const product={
   name:'地產牌研所',
   englishName:'PropExam HK',
   tagline:'大牌・細牌一站式備試',
-  price:238,
-  accessDays:60,
-  freePart:1,
+  price:359,
+  approxAccessDays:70,
+  preExamDays:60,
+  postExamDays:10,
   supportEmail:'',
-  updatedAt:'2026-09-22'
+  updatedAt:'2026-10-02'
 };
 
 export const tracks={
@@ -35,5 +36,5 @@ export const officialSources={
   exam:'https://www.eaa.org.hk/zh-hk/Examination/Exam',
   handbook:'https://www.eaa.org.hk/zh-hk/Examination/Examination-Handbook',
   schedule:'https://www.eaa.org.hk/zh-hk/Examination/Registration-details-post-registration-matters',
-  verifiedAt:'2026-09-22'
+  verifiedAt:'2026-10-02'
 };

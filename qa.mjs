@@ -68,12 +68,17 @@ assert.equal(REVIEW_SUCCESSES_REQUIRED,2);
 assert.equal(firstAttempts(state).length,2);
 assert.equal(percent(firstAttempts(state)),50);
 
+if(process.argv.includes('--core-only')){
+  console.log('PASS: 題庫規格、作答評分、錯題重溫、跨日鞏固及首次正確率。');
+  process.exit(0);
+}
+
 await mkdir(new URL('./qa/',import.meta.url),{recursive:true});
 const browser=await chromium.launch({headless:true,channel:'chrome'});
 const errors=[];
 const desktop=await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'Asia/Hong_Kong'});
 const page=await desktop.newPage();
-await page.clock.install({time:new Date('2026-09-22T12:00:00+08:00')});
+await page.clock.install({time:new Date('2026-09-30T12:00:00+08:00')});
 page.on('pageerror',error=>errors.push(error.message));
 
 await page.goto(`${baseUrl}/#home`);
@@ -149,9 +154,9 @@ assert.equal(await page.locator('.set-list .chapter-row').count(),6);
 assert.equal(await page.locator('.set-list .chapter-number').last().innerText(),'06');
 
 await page.goto(`${baseUrl}/#pricing`);
-await page.getByRole('heading',{name:'用 60 日完成一輪有系統的備試',exact:true}).waitFor();
-assert.match(await page.locator('.pricing-grid').innerText(),/HK\$238/);
-await page.getByRole('button',{name:/購買 60 日通行證/}).click();
+await page.getByRole('heading',{name:'按考期安排備試與考後重溫',exact:true}).waitFor();
+assert.match(await page.locator('.pricing-grid').innerText(),/HK\$359/);
+await page.getByRole('button',{name:/查看試行方案/}).click();
 assert.match(await page.locator('dialog').innerText(),/現時不會收取款項/);
 await page.getByRole('button',{name:'✕'}).click();
 
