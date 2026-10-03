@@ -26,7 +26,7 @@
 
 ## 本機執行
 
-需要 Node.js 20 或以上版本。
+使用 Node.js 24；版本記錄於 `.nvmrc` 及 `package.json`。
 
 ```bash
 npm run dev
@@ -37,17 +37,34 @@ npm run dev
 ## 驗證
 
 ```bash
-npm test
+npm ci --ignore-scripts
 npm run test:core
 npm run test:launch
+npm run test:backend
 npm run audit:questions
 npm run audit:content-rights
+npm run test:ci
 ```
 
-測試涵蓋題庫結構、私人欄位掃描、EAQE／SQE 分流、免費內容限制、作答及錯題保存、重新整理後的狀態、主要頁面與 320–1440px 響應式版面。內容使用權登記冊只供逐題審核，不代表任何題目已獲商業使用許可。
+核心測試涵蓋題庫結構、私人欄位掃描、EAQE／SQE 分流、免費內容限制、作答及錯題狀態；後端測試涵蓋輸入限制、錯誤遮蔽、身份驗證接口及環境設定。CI 執行這些無瀏覽器測試。
+
+完整瀏覽器回歸使用 `npm test`，需要另外配置 Playwright（`PLAYWRIGHT_PATH` 指向模組檔案）及可由 Playwright `chrome` channel 啟動的 Chrome；它才會檢查重新整理、主要頁面及 320–1440px 版面。完整瀏覽器及真機驗收仍待完成。內容使用權登記冊只供逐題審核，不代表任何題目已獲商業使用許可。
+
+## 後端開發準備
+
+已建立 `/api/health` 存活檢查、API 共用層、伺服器身份驗證接口及環境設定檢查。存活檢查只表示處理函式可運行；登入、資料庫、付款及 AI 仍未接入。
+
+```bash
+cp .env.example .env.local
+node --env-file=.env.local scripts/check-environment.mjs
+```
+
+檢查只列出設定名稱與狀態，不輸出秘密值。要求特定服務設定時使用 `--require=auth,database`。通過設定結構檢查仍需實測連線、授權及環境隔離。詳細步驟及待辦見 [後端開發準備](docs/BACKEND-SETUP.md) 和 [商業上線清單](docs/COMMERCIAL-LAUNCH-TODO.md)。
 
 ## 部署
 
-網站為純靜態專案。`vercel.json` 指定 `dist` 為輸出目錄，Vercel 不需要額外建置指令。
+介面由 `dist` 提供；`api/` 是待驗證部署的 Vercel Functions。`vercel.json` 指定 `dist` 為輸出目錄，沒有額外建置指令。新增 API 的部署、平台 runtime、環境設定及預覽保護仍須在有權限的 Vercel 專案驗收。
+
+`.env*` 私密設定不進 Git 或部署來源；`docs/`、本機草稿及測試也不加入 Vercel 上傳來源。GitHub Actions 只執行測試，不啟用收款或正式部署。既有公開原型仍可下載完整題庫，商業版本須在 CP4 移除公開付費題目並建立伺服器授權。
 
 本網站是獨立備試平台，並非地產代理監管局官方網站。考試日期、費用、合格要求及規則以地產代理監管局最新公布為準。

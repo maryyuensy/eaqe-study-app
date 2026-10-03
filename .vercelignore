@@ -1,0 +1,6 @@
+.env
+.env.*
+docs/
+qa/
+tests/
+scripts/validate-question-drafts.mjs

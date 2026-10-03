@@ -6,9 +6,6 @@ import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {initial,submitAnswer,firstAttempts,percent,playable,KEY,REVIEW_SUCCESSES_REQUIRED} from './dist/core.js';
 
-const playwrightPath=process.env.PLAYWRIGHT_PATH||join(homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs');
-const {chromium}=await import(pathToFileURL(playwrightPath));
-
 const questions=JSON.parse(await readFile(new URL('./dist/questions.json',import.meta.url),'utf8'));
 const baseUrl=process.env.BASE_URL||'http://localhost:5173';
 const orderSeed='propexam-hk-display-order-v2:41';
@@ -74,6 +71,8 @@ if(process.argv.includes('--core-only')){
 }
 
 await mkdir(new URL('./qa/',import.meta.url),{recursive:true});
+const playwrightPath=process.env.PLAYWRIGHT_PATH||join(homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs');
+const {chromium}=await import(pathToFileURL(playwrightPath));
 const browser=await chromium.launch({headless:true,channel:'chrome'});
 const errors=[];
 const desktop=await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'Asia/Hong_Kong'});
