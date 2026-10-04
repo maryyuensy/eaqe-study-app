@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-10-04",
+  "reviewScope": "全484題機器檢查；本清單只登記本輪確定需停用或補齊事實的17題，未列出的題目仍須逐題審核。",
+  "rightsStatus": "全484題未審核，均未獲商業發布核准；以content-source-rights-audit.csv逐題審核為準。",
+  "blockers": [
+    {
+      "id": "PX-5EF7A19A694D4608",
+      "version": 1,
+      "fingerprint": "5f23fbd74bc7156fc4fd5b36c63641081fd2bcfaf5880d4bc8f9949d9b8390c0",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "employment_notice_rule",
+      "classification": "confirmed_rule_error",
+      "summary": "完成試用期的通知期解說把無明確約定的情況概括為七日，未區分連續性合約及合約條款。",
+      "requiredAction": "補回連續性合約及通知期約定；無明確約定時按不少於一個月重建答案和選項。",
+      "officialSources": [
+        "https://www.labour.gov.hk/tc/faq/cap57d_whole.htm"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    },
+    {
+      "id": "PX-3AB5157B72684789",
+      "version": 1,
+      "fingerprint": "9b6aad438d65cd22b74f061853f91e0f20203c25b56fbb4832bb0cf71bfb5f02",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "data_access_missing_conditions",
+      "classification": "missing_legal_conditions",
+      "summary": "題幹只提供查閱次數，解說卻依賴類似要求及再次依從不合理兩項未列出的條件。",
+      "requiredAction": "明列類似要求及再次依從不合理的事實，重新核對唯一答案。",
+      "officialSources": [
+        "https://www.pcpd.org.hk/tc_chi/publications/files/book2_chi.pdf"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    },
+    {
+      "id": "PX-9E08BF311283476C",
+      "version": 1,
+      "fingerprint": "5bf07210d21d6b094381b1f0944a14094dd2192932c7b1dc74620db07c6e3f2d",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "first_hand_sales_scope",
+      "classification": "overbroad_legal_scope",
+      "summary": "題幹未指定條文，卻把整部條例的適用人士限定為發展商及持牌代理；失實陳述等罪行可適用於任何人。",
+      "requiredAction": "指定具體義務與條文，避免把整部條例概括為只規管兩類人士。",
+      "officialSources": [
+        "https://www.srpa.gov.hk/files/pdf/presentation-slide/Requirement_20241220.pdf"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    },
+    {
+      "id": "PX-EC174DF045674208",
+      "version": 1,
+      "fingerprint": "3cb6d17c0764b17220f78b75a04be6a5339b78df72d4fe0f0676e6150a532a00",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "manager_missing_qualifications",
+      "classification": "missing_case_facts",
+      "summary": "選項只有人物姓名，題幹未交代任何人的牌照、能力或職能，不能判斷經理資格。",
+      "requiredAction": "另行構思完整個案，列明每人的有效牌照與工作職能，再覆核。",
+      "officialSources": [],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "題幹完整性檢查；相關法理仍待覆核"
+    },
+    {
+      "id": "PX-698588630F9147D1",
+      "version": 1,
+      "fingerprint": "3f880d735f684a4f62df036f670727f895d4337babda343cd305f09e654f4e94",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "manager_missing_roles",
+      "classification": "missing_case_facts",
+      "summary": "解說依賴經理及東主的牌照責任，題幹沒有交代人物的職位、持牌狀態或實際行為。",
+      "requiredAction": "補齊各人的職務、牌照及行為，逐項對照法例。",
+      "officialSources": [],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "題幹完整性檢查；相關法理仍待覆核"
+    },
+    {
+      "id": "PX-D80C65386E9A4D03",
+      "version": 1,
+      "fingerprint": "5f6dc3353a66fbabec5d8d9ca4e6cb793ee8007c93b3926ef1925bc6d67c2ba5",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "interest_disclosure_missing_relationships",
+      "classification": "missing_case_facts",
+      "summary": "題幹未交代所列人物、公司、賣方之間的關係及代理身分，解說卻以指明親屬和佣金責任評分。",
+      "requiredAction": "列明親屬關係、交易雙方及代理身分後重新審核披露責任。",
+      "officialSources": [],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "題幹完整性檢查；相關法理仍待覆核"
+    },
+    {
+      "id": "PX-EC3F1241751C4A80",
+      "version": 1,
+      "fingerprint": "22adc667573b3224849edd33f4a9f08ada6c78f97c736aeb209133b266203d19",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "negligence_missing_relationships",
+      "classification": "missing_case_facts",
+      "summary": "題幹把住宅轉讓與業主／租客混用，且未交代人物身分、受託安排或疏忽造成損失的事實。",
+      "requiredAction": "另行設計清晰租賃或買賣個案，交代義務、違反、損失及僱傭關係。",
+      "officialSources": [],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "題幹完整性檢查；相關法理仍待覆核"
+    },
+    {
+      "id": "PX-FD00D6C6EB9F4814",
+      "version": 1,
+      "fingerprint": "14f76a5ebcbb4c77feb84efedd06a759eb46289d53a0c0e01c5620bafa0903a9",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "nomination_missing_transaction_stage",
+      "classification": "missing_case_facts",
+      "summary": "題幹未交代提名對象、交易完成狀態或共有形式，不能按解說判斷轉讓契及生存者取得權。",
+      "requiredAction": "明列交易尚未完成、提名安排與共有形式，再核對答案。",
+      "officialSources": [],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "題幹完整性檢查；相關法理仍待覆核"
+    },
+    {
+      "id": "PX-41738A9DA84B4DEE",
+      "version": 1,
+      "fingerprint": "68c6770af5a13ce94793b60ca4a3eae6caaa6a2141fb726e1cd1b165497b3976",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "misrepresentation_missing_participation",
+      "classification": "missing_case_facts",
+      "summary": "題幹未交代誰作失實陳述、賣方是否參與、誘因及損失，解說卻直接容許向賣方與代理索償。",
+      "requiredAction": "補回事實及法律條件，區分可尋求的救濟與必然索償成功。",
+      "officialSources": [],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "題幹完整性檢查；相關法理仍待覆核"
+    },
+    {
+      "id": "PX-D17D05055B354C90",
+      "version": 1,
+      "fingerprint": "c7eec08c0b802d321d3428044a3244226ae3293c61c7abb62a8b93f24bd08af8",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "cr109_scope_missing",
+      "classification": "missing_legal_scope",
+      "summary": "把住宅租賃一概概括為CR109，未排除須提交AR2的規管租賃。",
+      "requiredAction": "明示不屬第IVA部規管租賃，或把CR109與AR2適用範圍一併考核。",
+      "officialSources": [
+        "https://www.rvd.gov.hk/tc/tenancy_matters/toolkit_sale_and_lease.html"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    },
+    {
+      "id": "PX-4DDA3D18E0624459",
+      "version": 1,
+      "fingerprint": "9a76f315d3a63f5654c3847e20ba8b6ff2252de37ae0ffadf779bc6b9ce7a410",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "cr109_scope_missing",
+      "classification": "missing_legal_scope",
+      "summary": "CR109時點題未區分非規管住宅租賃與AR2規管租賃。",
+      "requiredAction": "補回非規管住宅租賃前提，並核對簽訂與租期開始的不同起算點。",
+      "officialSources": [
+        "https://www.rvd.gov.hk/tc/tenancy_matters/toolkit_sale_and_lease.html"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    },
+    {
+      "id": "PX-0D6ACC8CA69B4173",
+      "version": 1,
+      "fingerprint": "3ea56d0c30479c7dade609b7d4178206e8a7f98210906ca721c1995767f9f55e",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "rental_stamp_scope_missing",
+      "classification": "missing_legal_scope",
+      "summary": "未限定非規管住宅租賃，卻以CR109及雙方可分擔印花稅作唯一答案；規管租賃有不同強制安排。",
+      "requiredAction": "明示非規管租賃；若考規管租賃，須重建通知表格和印花負擔選項。",
+      "officialSources": [
+        "https://www.rvd.gov.hk/tc/tenancy_matters/toolkit_sale_and_lease.html",
+        "https://www.rvd.gov.hk/tc/faqs/tenancy_matters.html"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    },
+    {
+      "id": "PX-6FB5A3AA6F054803",
+      "version": 1,
+      "fingerprint": "a5cc894c035b54a58485ef74edc341a61f2f2b438722d9cb29a67d7e6b1e19cb",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "lease_copy_count_missing",
+      "classification": "missing_calculation_assumption",
+      "summary": "租賃印花計算提及對應本，但沒有說明副本數目及是否計入總額，答案只列基本稅額。",
+      "requiredAction": "明示是否有應課定額印花的副本；完整展示租金總額、平均年租、稅率和副本費。",
+      "officialSources": [
+        "https://www.ird.gov.hk/chi/pdf/sdo/irsd119.pdf"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    },
+    {
+      "id": "PX-6343DB66A46F4CCF",
+      "version": 1,
+      "fingerprint": "eacb078e5cf300b3d722e49f41c23d62b00dc115a15ef1a86acd7576a91facfc",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "structural_alteration_consent_missing",
+      "classification": "missing_legal_conditions",
+      "summary": "題幹未交代結構改動是否獲業主同意，解說卻按未經同意改動判斷；分租條款也未提供。",
+      "requiredAction": "明示業主同意、禁分租條款及適用租賃種類，重新核對。",
+      "officialSources": [],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "題幹完整性檢查；相關法理仍待覆核"
+    },
+    {
+      "id": "PX-1FA1CC0231EB484E",
+      "version": 1,
+      "fingerprint": "e11e7c9abaa741e393c50d20939a1f01d57dba78835ed746a41260e00e7f6d2d",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "structural_alteration_consent_missing",
+      "classification": "missing_legal_conditions",
+      "summary": "題幹未交代結構改動是否獲同意或租約有否禁分租，解說把未交代的條件當成既定事實。",
+      "requiredAction": "補回同意及分租條款，區分合約違反與法定沒收程序。",
+      "officialSources": [],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "題幹完整性檢查；相關法理仍待覆核"
+    },
+    {
+      "id": "PX-82EF70B7B0D24EAC",
+      "version": 1,
+      "fingerprint": "6277599112d9a7907a17fb2b959f2a25566402d6423d6d1ec323ccd680f2827f",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "answer_index_conflict",
+      "classification": "confirmed_answer_error",
+      "summary": "答案索引與主解說矛盾，程式把滋擾業主的選項評為正確。",
+      "requiredAction": "停用評分；按通告第10至12及15至16段重建答案索引與全部選項分析。",
+      "officialSources": [
+        "https://www.eaa.org.hk/practice/documents/10-05_CRC.pdf"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    },
+    {
+      "id": "PX-9F3A49DC89E24E3C",
+      "version": 1,
+      "fingerprint": "818dd51176d087f4646940a4b88b04a80066776d60db5c5b652cb8c94f4e78ee",
+      "status": "open",
+      "severity": "block_publication",
+      "reasonCode": "regulated_unit_alternative_definitions",
+      "classification": "multiple_answer_risk",
+      "summary": "法定單位定義有建築圖則或公契加獨有管有權兩條路徑，現有選項可能同時包含兩條符合描述的路徑。",
+      "requiredAction": "重新清楚區分法定建築圖則及一般圖則，或把兩條定義合併成唯一正確答案。",
+      "officialSources": [
+        "https://www.eaa.org.hk/Portals/0/Sections/LGA/Circular/22-01_CRC.pdf"
+      ],
+      "verificationDate": "2026-10-04",
+      "verificationScope": "官方資料與題幹／解說比較；不是整題法律或使用權核准"
+    }
+  ]
+}

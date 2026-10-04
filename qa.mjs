@@ -5,14 +5,17 @@ import {homedir} from 'node:os';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {initial,submitAnswer,firstAttempts,percent,playable,KEY,REVIEW_SUCCESSES_REQUIRED} from './dist/core.js';
+import {tracks} from './dist/product.js';
 
 const questions=JSON.parse(await readFile(new URL('./dist/questions.json',import.meta.url),'utf8'));
+const reviewPolicy=JSON.parse(await readFile(new URL('./dist/content-review.json',import.meta.url),'utf8'));
+const blockers=JSON.parse(await readFile(new URL('./docs/question-review-blockers.json',import.meta.url),'utf8'));
 const baseUrl=process.env.BASE_URL||'http://localhost:5173';
 const orderSeed='propexam-hk-display-order-v2:41';
 const allowedKeys=new Set(['id','version','status','part','type','stem','options','answer','concept','explanation','optionNotes','examTracks','free']);
 const forbiddenKeys=['source','sourcePath','sourceLabel','sources','chapter','set','setLabel','number','originalNumber','previousAnswer','previousResult','priority','reason','inclusion','organisedAt','totalInSet','sourceType'];
 
-assert.equal(questions.length,484,'公開題庫應包含 484 題');
+assert.equal(questions.length,484,'本機原型資料應包含 484 題；此數量不表示已核准公開');
 assert.equal(new Set(questions.map(question=>question.id)).size,484,'題目 ID 必須唯一');
 assert.ok(questions.every(question=>/^PX-[A-F0-9]{16}$/.test(question.id)),'公開題目 ID 不得帶有來源次序');
 assert.equal(new Set(questions.map(question=>question.stem)).size,484,'題幹不得重複');
@@ -22,7 +25,7 @@ const expectedOrder=[...questions].sort((a,b)=>Buffer.compare(
   createHash('sha256').update(`${orderSeed}\0${b.id}`).digest()
 ));
 assert.deepEqual(questions.map(question=>question.id),expectedOrder.map(question=>question.id),'公開題序必須採用固定隨機排序');
-assert.ok(questions.every(question=>playable(question)),'每題必須可正式作答');
+assert.ok(questions.every(question=>playable(question)),'每題須滿足原型作答的資料結構；此檢查不核准答案或使用權');
 assert.ok(questions.every(question=>question.options.length===5&&question.optionNotes.length===5),'每題須有五個選項及五項分析');
 assert.ok(questions.every(question=>Object.keys(question).every(key=>allowedKeys.has(key))),'題庫含有未獲准的欄位');
 assert.ok(questions.every(question=>forbiddenKeys.every(key=>!(key in question))),'題庫含有私人來源欄位');
@@ -33,8 +36,24 @@ assert.equal(questions.filter(question=>question.examTracks.includes('sqe')).len
 assert.equal(questions.filter(question=>question.free).length,20);
 assert.ok(questions.filter(question=>question.free).every(question=>question.part===1));
 
+assert.equal(reviewPolicy.schemaVersion,1,'覆核政策版本須明確');
+assert.match(reviewPolicy.reviewDate,/^\d{4}-\d{2}-\d{2}$/,'覆核政策須有日期');
+assert.ok(Array.isArray(reviewPolicy.blockedQuestionIds),'缺少覆核政策不能啟動訪客練習');
+const blockedIds=new Set(reviewPolicy.blockedQuestionIds);
+assert.equal(blockedIds.size,reviewPolicy.blockedQuestionIds.length,'阻擋清單不得重複');
+const questionIds=new Set(questions.map(question=>question.id));
+assert.ok([...blockedIds].every(id=>questionIds.has(id)),'阻擋清單須對應現有題目');
+assert.deepEqual([...blockedIds].sort(),blockers.blockers.filter(item=>item.status==='open').map(item=>item.id).sort(),'訪客政策不得遺漏已知阻擋題');
+assert.ok(Number.isInteger(reviewPolicy.commercialApprovedCount)&&reviewPolicy.commercialApprovedCount>=0&&reviewPolicy.commercialApprovedCount<=questions.length,'商業核准數量須有效');
+const guestQuestions=questions.filter(question=>!blockedIds.has(question.id));
+const guestPool=track=>guestQuestions.filter(question=>question.examTracks.includes(track));
+const guestFree=track=>guestPool(track).filter(question=>question.free);
+const lockedParts=track=>tracks[track].parts.filter(part=>!guestFree(track).some(question=>question.part===part));
+assert.ok(guestQuestions.length>0&&guestFree('eaqe').length>=2,'流程測試須有至少兩題未被阻擋的免費原型題');
+assert.ok(guestQuestions.every(question=>!blockedIds.has(question.id)),'阻擋題不得留在訪客題池');
+
 const state=initial();
-const [sample,uncertainSample]=questions;
+const [sample,uncertainSample]=guestFree('eaqe');
 let unitSession=0;
 const answer=(question,choice,uncertain,iso)=>{
   state.session={id:`unit-${++unitSession}`,ids:[question.id],index:0,result:null,activeMs:9000,mode:'review'};
@@ -66,7 +85,7 @@ assert.equal(firstAttempts(state).length,2);
 assert.equal(percent(firstAttempts(state)),50);
 
 if(process.argv.includes('--core-only')){
-  console.log('PASS: 題庫規格、作答評分、錯題重溫、跨日鞏固及首次正確率。');
+  console.log(`PASS: 本機原型資料結構、覆核政策（排除 ${blockedIds.size} 題）、作答紀錄及跨日錯題鞏固；訪客 EAQE ${guestPool('eaqe').length}／SQE ${guestPool('sqe').length}，免費 ${guestFree('eaqe').length} 題。答案正確性及商業使用權另行覆核。`);
   process.exit(0);
 }
 
@@ -74,15 +93,19 @@ await mkdir(new URL('./qa/',import.meta.url),{recursive:true});
 const playwrightPath=process.env.PLAYWRIGHT_PATH||join(homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs');
 const {chromium}=await import(pathToFileURL(playwrightPath));
 const browser=await chromium.launch({headless:true,channel:'chrome'});
+try{
 const errors=[];
 const desktop=await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'Asia/Hong_Kong'});
 const page=await desktop.newPage();
-await page.clock.install({time:new Date('2026-09-30T12:00:00+08:00')});
+await page.clock.install({time:new Date('2026-10-04T12:00:00+08:00')});
 page.on('pageerror',error=>errors.push(error.message));
 
 await page.goto(`${baseUrl}/#home`);
 await page.getByRole('heading',{name:/先做題/}).waitFor();
-assert.match(await page.locator('.product-proof').innerText(),/484/);
+assert.equal(await page.locator('.microcopy').first().innerText(),`${guestFree('eaqe').length} 題免費試做 · 無需付款資料`);
+assert.equal(await page.locator('.product-proof .stats strong').first().innerText(),String(guestPool('eaqe').length));
+assert.equal(await page.locator('.product-proof .stats strong').nth(1).innerText(),String(guestFree('eaqe').length));
+assert.equal(await page.locator('.prototype-label').innerText(),'原型內容，待覆核');
 assert.equal(await page.title(),'主頁｜地產牌研所');
 await page.evaluate(()=>localStorage.setItem('eaqe-prototype-v1',JSON.stringify({private:true})));
 await page.evaluate(()=>localStorage.setItem('propexam-hk-v2',JSON.stringify({test:true})));
@@ -93,9 +116,10 @@ await page.screenshot({path:new URL('./qa/desktop-home.png',import.meta.url).pat
 
 await page.goto(`${baseUrl}/#practice`);
 await page.getByRole('heading',{name:'練習題庫',exact:true}).waitFor();
-assert.match(await page.locator('.practice-overview').innerText(),/484/);
-assert.equal(await page.locator('.set-list .chapter-row').count(),8);
-assert.equal(await page.locator('.locked-link').count(),7);
+assert.equal((await page.locator('.library-total').innerText()).replace(/\s*題\s*$/,'').trim(),String(guestPool('eaqe').length));
+assert.match(await page.locator('.practice-overview').innerText(),new RegExp(`免費可做 ${guestFree('eaqe').length} 題`));
+assert.equal(await page.locator('.set-list .chapter-row').count(),tracks.eaqe.parts.length);
+assert.equal(await page.locator('.set-list .locked-link').count(),lockedParts('eaqe').length);
 await page.screenshot({path:new URL('./qa/desktop-practice.png',import.meta.url).pathname,fullPage:true});
 
 await page.locator('[data-action="start-part"]').click();
@@ -133,7 +157,7 @@ assert.equal(await page.evaluate(key=>Object.values(JSON.parse(localStorage.getI
 await page.goto(`${baseUrl}/#history`);
 assert.match(await page.locator('.record-section').first().innerText(),/鞏固進度 1 \/ 2/);
 
-await page.clock.setSystemTime(new Date('2026-09-23T12:00:00+08:00'));
+await page.clock.setSystemTime(new Date('2026-10-05T12:00:00+08:00'));
 await page.locator('.record-section').filter({has:page.getByRole('heading',{name:'待重溫',exact:true})}).getByRole('button',{name:/再做一次/}).click();
 await page.getByRole('button',{name:'開始',exact:true}).click();
 await page.getByRole('radio').nth(correctIndex).check();
@@ -148,8 +172,8 @@ await page.getByRole('heading',{name:'尚未建立弱項',exact:true}).waitFor()
 await page.goto(`${baseUrl}/#learning`);
 await page.getByRole('button',{name:/細牌/}).click();
 await page.goto(`${baseUrl}/#practice`);
-assert.match(await page.locator('.practice-overview').innerText(),/442/);
-assert.equal(await page.locator('.set-list .chapter-row').count(),6);
+assert.equal((await page.locator('.library-total').innerText()).replace(/\s*題\s*$/,'').trim(),String(guestPool('sqe').length));
+assert.equal(await page.locator('.set-list .chapter-row').count(),tracks.sqe.parts.length);
 assert.equal(await page.locator('.set-list .chapter-number').last().innerText(),'06');
 
 await page.goto(`${baseUrl}/#pricing`);
@@ -159,27 +183,50 @@ await page.getByRole('button',{name:/查看試行方案/}).click();
 assert.match(await page.locator('dialog').innerText(),/現時不會收取款項/);
 await page.getByRole('button',{name:'✕'}).click();
 
-await page.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));state.settings.track='eaqe';state.entitlement={plan:'full',expiresAt:'2099-12-31'};localStorage.setItem(key,JSON.stringify(state))},KEY);
+await page.evaluate(key=>{const state=JSON.parse(localStorage.getItem(key));state.settings.track='eaqe';state.entitlement={plan:'paid',expiresAt:'2099-12-31T23:59:59Z'};localStorage.setItem(key,JSON.stringify(state))},KEY);
 await page.reload();
 await page.goto(`${baseUrl}/#practice`);
 await page.getByRole('heading',{name:'練習題庫',exact:true}).waitFor();
-assert.equal(await page.locator('.locked-link').count(),0);
-assert.equal(await page.locator('[data-action="start-part"]').count(),8);
+assert.equal(await page.locator('.set-list .locked-link').count(),lockedParts('eaqe').length,'偽造本機通行證不能解鎖付費章節');
+assert.equal(await page.locator('[data-action="start-part"]').count(),tracks.eaqe.parts.length-lockedParts('eaqe').length,'訪客仍只可開始免費部分');
+await page.goto(`${baseUrl}/#part/${lockedParts('eaqe')[0]}`);
+await page.locator('.paywall').waitFor();
+assert.equal(await page.locator('[data-action="review-one"]').count(),0,'直接進入鎖定章節不可顯示教材練習');
+assert.match(await page.locator('.paywall').innerText(),/付款尚未開放/);
 await page.goto(`${baseUrl}/#analysis`);
 await page.getByRole('heading',{name:'學習進度',exact:true}).waitFor();
-assert.match(await page.locator('.analysis-stats').innerText(),/1 \/ 484/);
+assert.match(await page.locator('.analysis-stats').innerText(),new RegExp(`1 / ${guestPool('eaqe').length}`));
 await page.getByRole('button',{name:'設定'}).click();
-assert.match(await page.locator('dialog').innerText(),/只儲存在這個瀏覽器/);
+assert.match(await page.locator('dialog').innerText(),/訪客紀錄只儲存在此瀏覽器/);
 await page.getByRole('button',{name:'清除本機紀錄'}).click();
 await page.getByRole('button',{name:'確認清除'}).click();
 assert.equal(await page.evaluate(key=>localStorage.getItem(key),KEY),null);
+
+// A saved blocked question cannot survive the refreshed review policy.
+const blockedQuestion=questions.find(question=>blockedIds.has(question.id));
+const stale=initial();stale.session={id:'stale-blocked',ids:[blockedQuestion.id],index:0,result:null,draft:{},activeMs:0,mode:'practice'};
+await page.evaluate(({key,value})=>localStorage.setItem(key,JSON.stringify(value)),{key:KEY,value:stale});
+await page.reload({waitUntil:'networkidle'});
+assert.equal(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)).session,KEY),null,'既有阻擋題 session 須被清除');
+
+// Fail closed when the required review policy is unavailable, without contacting external accounts.
+const missingReview=await browser.newContext({timezoneId:'Asia/Hong_Kong'});
+const unavailable=await missingReview.newPage();
+unavailable.on('pageerror',error=>errors.push(error.message));
+await unavailable.route('**/content-review.json',route=>route.fulfill({status:404,contentType:'application/json',body:'{}'}));
+await unavailable.goto(`${baseUrl}/#practice`);
+await unavailable.getByRole('alert').filter({hasText:'題目覆核清單未能載入，練習暫停。'}).waitFor();
+await unavailable.getByRole('button',{name:/開始 10 題/}).click();
+assert.notEqual(new URL(unavailable.url()).hash,'#quiz','缺少覆核政策不能開始作答');
+assert.equal(await unavailable.locator('#question-title').count(),0);
+await missingReview.close();
 
 const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,deviceScaleFactor:1,timezoneId:'Asia/Hong_Kong'});
 const mobilePage=await mobile.newPage();
 mobilePage.on('pageerror',error=>errors.push(error.message));
 for(const width of [320,390,768,1440]){
   await mobilePage.setViewportSize({width,height:900});
-  for(const hash of ['home','learning','practice','analysis','pricing']){
+  for(const hash of ['home','learning','practice','analysis','pricing','login','signup','forgot','terms','privacy','help']){
     await mobilePage.goto(`${baseUrl}/#${hash}`);
     await mobilePage.locator('main').waitFor();
     assert.equal(await mobilePage.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`水平溢出：${width}px #${hash}`);
@@ -193,5 +240,5 @@ const filePage=await desktop.newPage();
 await filePage.goto('file://'+new URL('./dist/index.html',import.meta.url).pathname);
 await filePage.getByRole('heading',{name:'請開啟網站預覽'}).waitFor();
 assert.deepEqual(errors,[]);
-await browser.close();
-console.log('PASS: 484 題公開題庫、私人資料清理、EAQE/SQE 分流、免費限制、錯題兩日鞏固至清空及 320–1440px 版面。');
+console.log(`PASS: 本機訪客原型 EAQE ${guestPool('eaqe').length}／SQE ${guestPool('sqe').length}、免費 ${guestFree('eaqe').length} 題、覆核阻擋、私人資料清理、偽造付費資格拒絕、錯題兩日鞏固及 320–1440px 版面。未驗收真實 Supabase 或商業上線。`);
+}finally{await browser.close();}

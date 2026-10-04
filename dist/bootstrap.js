@@ -1,0 +1,1 @@
+if(location.protocol==='file:'){document.querySelector('main').innerHTML='<div class="empty"><h1>請開啟網站預覽</h1><p>練習功能須透過網站伺服器使用。</p><a class="primary" href="http://localhost:5173/#home">開啟地產牌研所</a></div>'}else{import('./app.js').catch(()=>{document.querySelector('main').innerHTML='<div class="empty"><h1>載入失敗</h1><a class="secondary" href="./">重新載入</a></div>'})}
