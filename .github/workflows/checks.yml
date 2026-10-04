@@ -1,0 +1,77 @@
+name: Prototype and backend checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run test:ci
+      - name: Check audit register is reproducible
+        run: git diff --exit-code -- docs/content-source-rights-audit.csv
+      - name: Check patch formatting
+        run: git diff --check
+  database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: app_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-only-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: ci-only-password
+      PGDATABASE: app_test
+      RUN_DATABASE_TESTS: '1'
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Bootstrap disposable authentication fixture
+        run: psql -v ON_ERROR_STOP=1 -f db/tests/bootstrap.sql
+      - name: Apply migrations to empty database
+        run: |
+          psql -v ON_ERROR_STOP=1 -f db/migrations/202610040001_learning_backend.sql
+          psql -v ON_ERROR_STOP=1 -f db/migrations/202610040002_account_services.sql
+          psql -v ON_ERROR_STOP=1 -f db/migrations/202610040003_review_concepts.sql
+      - name: Check data isolation, grading, review and grants
+        run: |
+          psql -v ON_ERROR_STOP=1 -f db/tests/learning.sql
+          psql -v ON_ERROR_STOP=1 -f db/tests/review_concepts.sql
+      - name: Check concurrent retries and sync ordering
+        run: node --test tests/database-postgres.test.mjs tests/database-http.test.mjs
+      - name: Check isolated synthetic backup restore
+        env:
+          RUN_DATABASE_BACKUP_TESTS: '1'
+        run: node --test tests/database-backup.test.mjs
