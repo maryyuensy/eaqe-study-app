@@ -2,6 +2,8 @@
 
 日期：2026-10-04。以下區分實際執行結果及尚待外部環境驗收的項目。本輪只測試本機預覽、隔離的瀏覽器訪客資料及合成測試帳戶，沒有操作真實付款或外部使用者。
 
+GitHub 實作提交 [`f9ddd75`](https://github.com/maryyuensy/eaqe-study-app/commit/f9ddd75e2f43d747a0b390b4189a5b00e87fd2c1) 的 [CI 執行](https://github.com/maryyuensy/eaqe-study-app/actions/runs/37186517101)已確認：`checks` 與 `database` 兩個工作均為 SUCCESS。資料庫工作實際套用三份 migration、執行 SQL、HTTP／並發及隔離備份還原；程式工作執行 npm test:ci。成果位於 [草稿 PR #3](https://github.com/maryyuensy/eaqe-study-app/pull/3)，目標 main，尚未合併或部署。
+
 ## ✅ 已執行
 
 | 項目 | 方法及觀察結果 | 狀態 |

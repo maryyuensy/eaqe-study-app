@@ -973,7 +973,8 @@ RLS 可以把列層級權限放在資料庫；具特權的 service key 可能繞
 - ✅ 延伸至 CP5／AI 準備：13 項付款契約及 12 項 AI 上下文純函式測試通過；固定評分不交模型，沒有實際付款或模型呼叫。完成營運診斷手冊，仍待真實客服及財務工具。
 - ✅ 最終 Node 全測試共 134 項：129 通過、0 失敗，5 個 opt-in 資料庫入口預設 skipped；另實跑 HTTP／並發 8 項及隔離備份還原 1 項，全部通過、0 skipped。132 項 SQL 及 Chrome 四寬度十一個頁面亦有實測證據。這些不是正式 Supabase／付款／手機驗收。
 - ⭕️ 真實 Auth／SMTP／Vercel 權限與設定、兩裝置同步、付款／退款、AI、舊資料遷移、財務刪除／備份政策及全題庫人工核准仍待處理。沒有啟用真實收款、公開部署或發布 148 題內部草稿。
-- 詳細文件：[後端接入](BACKEND-SETUP.md)、[API 契約](API-CONTRACT.md)、[資料庫契約](../db/README.md)、[付款接入](PAYMENT-INTEGRATION.md)、[AI 接入](AI-INTEGRATION.md)、[營運手冊](OPERATIONS-RUNBOOK.md)、[安全覆核](BACKEND-SECURITY-REVIEW.md)、[本機驗收](QA-ACCEPTANCE.md)、[內容覆核](QUESTION-CONTENT-REVIEW.md)。GitHub 提交與 CI 執行證據在完成本輪推送後補記。
+- ✅ 成果已推送至 `codex/commercial-backend-v1`，建立[草稿 PR #3](https://github.com/maryyuensy/eaqe-study-app/pull/3)，目標 main；尚未合併或部署。實作提交 [`f9ddd75`](https://github.com/maryyuensy/eaqe-study-app/commit/f9ddd75e2f43d747a0b390b4189a5b00e87fd2c1) 的[雲端 CI](https://github.com/maryyuensy/eaqe-study-app/actions/runs/37186517101)已確認 `checks` 及 `database` 兩項均 SUCCESS；資料庫項實際跑 SQL、HTTP／並發及隔離備份還原，沒有把預設 skipped 當通過。
+- 詳細文件：[後端接入](BACKEND-SETUP.md)、[API 契約](API-CONTRACT.md)、[資料庫契約](../db/README.md)、[付款接入](PAYMENT-INTEGRATION.md)、[AI 接入](AI-INTEGRATION.md)、[營運手冊](OPERATIONS-RUNBOOK.md)、[安全覆核](BACKEND-SECURITY-REVIEW.md)、[本機驗收](QA-ACCEPTANCE.md)、[內容覆核](QUESTION-CONTENT-REVIEW.md)。
 
 ## 16. 執行時的官方參考
 
